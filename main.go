@@ -10,11 +10,29 @@ import (
 	"github.com/joho/godotenv"
 )
 
-type Forecast struct {
-	City struct {
-		Name    string `json:"name"`
+type Weather struct {
+	Main        string `json:"main"`
+	Description string `json:"description"`
+}
+
+type Main struct {
+	Temperature float64 `json:"temp"`
+}
+
+type Current struct {
+	Name string `json:"name"`
+	Sys  struct {
 		Country string `json:"country"`
-	}
+	} `json:"sys"`
+	Weather []Weather `json:"weather"`
+	Main    Main      `json:"main"`
+}
+
+type Forecast struct {
+	List []struct {
+		Weather []Weather `json:"weather"`
+		Main    Main      `json:"main"`
+	} `json:"list"`
 }
 
 func main() {
