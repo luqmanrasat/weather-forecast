@@ -28,8 +28,8 @@ func main() {
 	lat := os.Getenv("LOCATION_LAT")
 	long := os.Getenv("LOCATION_LONG")
 
-	urlCurrent := openweatherApiUrl + "weather?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
-	// urlForecast := openweatherApiUrl + "forecast?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
+	urlCurrent := openweatherApiUrl + "weather?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey + "&units=metric"
+	// urlForecast := openweatherApiUrl + "forecast?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey + "&units=metric"
 
 	// fetch current data
 	res, err := http.Get(urlCurrent)
