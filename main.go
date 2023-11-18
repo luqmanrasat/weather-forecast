@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -19,6 +21,24 @@ func main() {
 	lat := os.Getenv("LOCATION_LAT")
 	long := os.Getenv("LOCATION_LONG")
 
-	apiUrl := openweatherApiEndpoint + "?lat=" + lat + "&long=" + long + "&appid=" + openweatherApiKey
-	fmt.Println(apiUrl)
+	apiUrl := openweatherApiEndpoint + "?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
+
+	// fetch forecast data
+	res, err := http.Get(apiUrl)
+	if err != nil {
+		panic(err)
+	}
+
+	defer res.Body.Close()
+
+	if res.StatusCode != 200 {
+		panic("Weather API not available")
+	}
+
+	body, err := io.ReadAll(res.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(string(body))
 }
