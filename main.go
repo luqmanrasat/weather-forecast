@@ -10,21 +10,29 @@ import (
 	"github.com/joho/godotenv"
 )
 
+type Forecast struct {
+	City struct {
+		Name    string `json:"name"`
+		Country string `json:"country"`
+	}
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatalln("Error loading .env file!")
 	}
 
-	openweatherApiEndpoint := os.Getenv("OPENWEATHER_API_ENDPOINT")
+	openweatherApiUrl := os.Getenv("OPENWEATHER_API_ENDPOINT")
 	openweatherApiKey := os.Getenv("OPENWEATHER_API_KEY")
 	lat := os.Getenv("LOCATION_LAT")
 	long := os.Getenv("LOCATION_LONG")
 
-	apiUrl := openweatherApiEndpoint + "?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
+	urlCurrent := openweatherApiUrl + "weather?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
+	// urlForecast := openweatherApiUrl + "forecast?lat=" + lat + "&lon=" + long + "&appid=" + openweatherApiKey
 
-	// fetch forecast data
-	res, err := http.Get(apiUrl)
+	// fetch current data
+	res, err := http.Get(urlCurrent)
 	if err != nil {
 		panic(err)
 	}
