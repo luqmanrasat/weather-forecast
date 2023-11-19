@@ -7,7 +7,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
+	"github.com/fatih/color"
 	"github.com/joho/godotenv"
 )
 
@@ -75,8 +77,6 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(weatherCurrent)
-
 	// fetch forecast data
 	res, err = http.Get(urlForecast)
 	if err != nil {
@@ -100,5 +100,36 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(weatherForecast)
+	// print to terminal
+	state, country, currentTemp, currentWeatherDesc := weatherCurrent.Name, weatherCurrent.Sys.Country, weatherCurrent.Main.Temperature, weatherCurrent.Weather[0].Description
+	fmt.Printf("%s, %s: %.0fC, %s\n", state, country, currentTemp, currentWeatherDesc)
+
+	yNow, mNow, dNow := time.Now().Date()
+
+	forecastList := weatherForecast.List
+	for _, f := range forecastList {
+		dateTime, forecastTemp, forecastPop, forecastWeather := time.Unix(f.DateTime, 0), f.Main.Temperature, f.ProbabilityOfPrecipitation, f.Weather[0]
+
+		if dateTime.Before(time.Now()) {
+			continue
+		}
+
+		yForecast, mForecast, dForecast := dateTime.Date()
+		if yNow != yForecast || mNow != mForecast || dNow != dForecast {
+			continue
+		}
+
+		message := fmt.Sprintf("%s - %.0fC, %.0f%%, %s\n", dateTime.Format("15:04"), forecastTemp, forecastPop*100, forecastWeather.Description)
+		if forecastWeather.Main != "Rain" {
+			fmt.Print(message)
+			continue
+		}
+
+		if forecastPop < 0.4 {
+			fmt.Print(message)
+			continue
+		}
+
+		color.Red(message)
+	}
 }
